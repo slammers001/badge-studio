@@ -53,6 +53,11 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     usernameY: 15,
     usernameFontSize: 28,
     showAvatar: true,
+    showUsername: true,
+    avatarX: 15,
+    avatarY: 30,
+    avatarSize: 8,
+    bannerScale: 100,
   });
 
   const [bannerBadges, setBannerBadges] = useState<BannerBadge[]>(() => {
