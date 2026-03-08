@@ -5,6 +5,7 @@ import { Github, ArrowLeft, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { BadgeCard } from '@/components/BadgeCard';
 import { BadgeDetail } from '@/components/BadgeDetail';
+import { BannerEditor } from '@/components/BannerEditor';
 import { type GitBadge, type BadgeCategory, CATEGORY_CONFIG } from '@/data/badges';
 
 interface GitHubUser {
@@ -149,6 +150,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [selectedBadge, setSelectedBadge] = useState<GitBadge | null>(null);
   const [activeCategory, setActiveCategory] = useState<BadgeCategory | 'all'>('all');
+  const [showBanner, setShowBanner] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['github', username],
@@ -203,6 +205,32 @@ const Profile = () => {
             </div>
           </motion.div>
 
+          {/* Banner toggle */}
+          <div className="flex gap-3 mb-8">
+            <button
+              onClick={() => setShowBanner(false)}
+              className={`px-5 py-2.5 rounded-lg text-sm font-mono transition-all border ${!showBanner ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}
+            >
+              Badge Collection
+            </button>
+            <button
+              onClick={() => setShowBanner(true)}
+              className={`px-5 py-2.5 rounded-lg text-sm font-mono transition-all border ${showBanner ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}
+            >
+              ✨ Banner Editor
+            </button>
+          </div>
+
+          {showBanner ? (
+            <BannerEditor
+              username={data.user.login}
+              displayName={data.user.name || data.user.login}
+              avatarUrl={data.user.avatar_url}
+              badges={badges}
+            />
+          ) : (
+          <>
+
           {/* Stats */}
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -249,6 +277,8 @@ const Profile = () => {
           <AnimatePresence>
             {selectedBadge && <BadgeDetail badge={selectedBadge} onClose={() => setSelectedBadge(null)} />}
           </AnimatePresence>
+          </>
+          )}
         </div>
       )}
     </div>
