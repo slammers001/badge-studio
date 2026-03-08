@@ -38,9 +38,9 @@ export const BadgeCard = ({ badge, onClick, size = 'md' }: BadgeCardProps) => {
       {badge.rarity === 'legendary' && badge.earned && (
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent/20 via-transparent to-accent/10 animate-pulse-glow" />
       )}
-      <span className={`${iconSizes[size]} ${isLocked ? 'blur-sm' : ''} relative z-10`}>
-        {isLocked ? '🔒' : badge.icon}
-      </span>
+      <div className={`${isLocked ? 'blur-sm grayscale' : ''} relative z-10 flex items-center justify-center`}>
+        <img src={badge.icon} alt={badge.name} className={`${size === 'sm' ? 'w-10 h-10' : size === 'md' ? 'w-14 h-14' : 'w-20 h-20'} object-contain`} />
+      </div>
       <span className={`text-[10px] font-mono font-semibold mt-1 text-center leading-tight relative z-10 ${
         badge.earned ? 'text-foreground' : 'text-muted-foreground'
       }`}>
