@@ -74,7 +74,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   });
 
   const [selectedBadge, setSelectedBadge] = useState<number | null>(null);
-  const [resizing, setResizing] = useState<{ index: number; startScale: number; startX: number } | null>(null);
+  const [resizing, setResizing] = useState<{ index: number; startScale: number; startDist: number } | null>(null);
   const [rotating, setRotating] = useState<{ index: number; startAngle: number; startRotation: number } | null>(null);
 
   const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
