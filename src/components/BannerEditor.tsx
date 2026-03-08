@@ -105,7 +105,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       y: 40 + Math.floor(i / cols) * 18,
       scale: 1,
     })));
-    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15 }));
+    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30 }));
   };
 
   const tabs = [
