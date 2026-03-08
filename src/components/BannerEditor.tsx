@@ -8,6 +8,7 @@ interface BannerBadge {
   x: number; // percentage 0-100
   y: number; // percentage 0-100
   scale: number;
+  rotation: number;
 }
 
 interface BannerConfig {
@@ -68,8 +69,13 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       x: startX + (i % cols) * 10,
       y: 40 + Math.floor(i / cols) * 18,
       scale: 1,
+      rotation: 0,
     }));
   });
+
+  const [selectedBadge, setSelectedBadge] = useState<number | null>(null);
+  const [resizing, setResizing] = useState<{ index: number; startScale: number; startX: number } | null>(null);
+  const [rotating, setRotating] = useState<{ index: number; startAngle: number; startRotation: number } | null>(null);
 
   const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
 
@@ -78,8 +84,29 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragging || !canvasRef.current) return;
+    if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
+
+    // Handle rotation
+    if (rotating) {
+      const bb = bannerBadges[rotating.index];
+      const centerX = rect.left + (bb.x / 100) * rect.width;
+      const centerY = rect.top + (bb.y / 100) * rect.height;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+      const delta = angle - rotating.startAngle;
+      setBannerBadges(prev => prev.map((b, i) => i === rotating.index ? { ...b, rotation: rotating.startRotation + delta } : b));
+      return;
+    }
+
+    // Handle resizing
+    if (resizing) {
+      const delta = (e.clientX - resizing.startX) / rect.width * 5;
+      const newScale = Math.max(0.3, Math.min(3, resizing.startScale + delta));
+      setBannerBadges(prev => prev.map((b, i) => i === resizing.index ? { ...b, scale: newScale } : b));
+      return;
+    }
+
+    if (!dragging) return;
     const x = Math.max(5, Math.min(95, ((e.clientX - rect.left) / rect.width) * 100));
     const y = Math.max(5, Math.min(95, ((e.clientY - rect.top) / rect.height) * 100));
 
@@ -90,10 +117,12 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     } else if (dragging.type === 'badge' && dragging.index !== undefined) {
       setBannerBadges(prev => prev.map((b, i) => i === dragging.index ? { ...b, x, y } : b));
     }
-  }, [dragging]);
+  }, [dragging, resizing, rotating, bannerBadges]);
 
   const handlePointerUp = useCallback(() => {
     setDragging(null);
+    setResizing(null);
+    setRotating(null);
   }, []);
 
   const resetLayout = () => {
@@ -104,8 +133,28 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       x: startX + (i % cols) * 10,
       y: 40 + Math.floor(i / cols) * 18,
       scale: 1,
+      rotation: 0,
     })));
     setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30 }));
+    setSelectedBadge(null);
+  };
+
+  const handleResizeStart = (e: React.PointerEvent, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setResizing({ index, startScale: bannerBadges[index].scale, startX: e.clientX });
+  };
+
+  const handleRotateStart = (e: React.PointerEvent, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const bb = bannerBadges[index];
+    const centerX = rect.left + (bb.x / 100) * rect.width;
+    const centerY = rect.top + (bb.y / 100) * rect.height;
+    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    setRotating({ index, startAngle, startRotation: bb.rotation });
   };
 
   const tabs = [
@@ -131,11 +180,12 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
+        onClick={(e) => { if (e.target === canvasRef.current || (e.target as HTMLElement).classList.contains('bg-grid')) setSelectedBadge(null); }}
         className="relative w-full rounded-2xl border-2 border-border overflow-hidden select-none"
         style={{
           aspectRatio: '3 / 1',
           background: `linear-gradient(${config.bgAngle}deg, ${config.bgColor1}, ${config.bgColor2})`,
-          cursor: dragging ? 'grabbing' : 'default',
+          cursor: dragging || resizing || rotating ? 'grabbing' : 'default',
           transform: `scale(${config.bannerScale / 100})`,
           transformOrigin: 'top center',
         }}
@@ -181,22 +231,63 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
           </div>
         )}
 
-        {/* Badges - no square containers */}
-        {bannerBadges.map((bb, i) => (
-          <div
-            key={bb.badge.id}
-            className="absolute"
-            style={{
-              left: `${bb.x}%`,
-              top: `${bb.y}%`,
-              transform: `translate(-50%, -50%) scale(${bb.scale})`,
-              cursor: dragging?.type === 'badge' && dragging.index === i ? 'grabbing' : 'grab',
-            }}
-            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('badge', i); }}
-          >
-            <img src={bb.badge.icon} alt={bb.badge.name} className="w-12 h-12 object-contain drop-shadow-lg" />
-          </div>
-        ))}
+        {/* Badges with selection handles */}
+        {bannerBadges.map((bb, i) => {
+          const isSelected = selectedBadge === i;
+          return (
+            <div
+              key={bb.badge.id}
+              className="absolute"
+              style={{
+                left: `${bb.x}%`,
+                top: `${bb.y}%`,
+                transform: `translate(-50%, -50%) scale(${bb.scale}) rotate(${bb.rotation}deg)`,
+                cursor: dragging?.type === 'badge' && dragging.index === i ? 'grabbing' : 'grab',
+                zIndex: isSelected ? 10 : 1,
+              }}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                setSelectedBadge(i);
+                handlePointerDown('badge', i);
+              }}
+            >
+              <img src={bb.badge.icon} alt={bb.badge.name} className="w-12 h-12 object-contain drop-shadow-lg" />
+              
+              {/* Selection frame */}
+              {isSelected && (
+                <>
+                  {/* Dashed border */}
+                  <div className="absolute -inset-2 border-2 border-dashed rounded pointer-events-none" style={{ borderColor: 'hsl(var(--primary))' }} />
+                  
+                  {/* Corner resize handles */}
+                  {[
+                    { pos: '-top-3 -left-3', cursor: 'nwse-resize' },
+                    { pos: '-top-3 -right-3', cursor: 'nesw-resize' },
+                    { pos: '-bottom-3 -left-3', cursor: 'nesw-resize' },
+                    { pos: '-bottom-3 -right-3', cursor: 'nwse-resize' },
+                  ].map((handle, hi) => (
+                    <div
+                      key={hi}
+                      className={`absolute ${handle.pos} w-3 h-3 rounded-sm bg-primary border border-primary-foreground`}
+                      style={{ cursor: handle.cursor }}
+                      onPointerDown={(e) => handleResizeStart(e, i)}
+                    />
+                  ))}
+                  
+                  {/* Rotation handle */}
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                    <div
+                      className="w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground cursor-grab"
+                      style={{ cursor: rotating ? 'grabbing' : 'grab' }}
+                      onPointerDown={(e) => handleRotateStart(e, i)}
+                    />
+                    <div className="w-px h-3 bg-primary" />
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
 
         {/* Drag hint */}
         {!dragging && (
