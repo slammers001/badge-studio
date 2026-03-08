@@ -136,44 +136,52 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
           aspectRatio: '3 / 1',
           background: `linear-gradient(${config.bgAngle}deg, ${config.bgColor1}, ${config.bgColor2})`,
           cursor: dragging ? 'grabbing' : 'default',
+          transform: `scale(${config.bannerScale / 100})`,
+          transformOrigin: 'top center',
         }}
       >
         {/* Grid overlay */}
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
 
-        {/* Avatar */}
+        {/* Avatar - independent draggable */}
         {config.showAvatar && (
           <div
-            className="absolute w-[8%] aspect-square rounded-full border-2 overflow-hidden pointer-events-none"
+            className="absolute rounded-full border-2 overflow-hidden"
             style={{
-              left: `${config.usernameX - 12}%`,
-              top: `${config.usernameY - 2}%`,
+              width: `${config.avatarSize}%`,
+              aspectRatio: '1',
+              left: `${config.avatarX}%`,
+              top: `${config.avatarY}%`,
               transform: 'translate(-50%, -50%)',
               borderColor: config.usernameColor,
+              cursor: dragging?.type === 'avatar' ? 'grabbing' : 'grab',
             }}
+            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('avatar'); }}
           >
             <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
           </div>
         )}
 
-        {/* Username */}
-        <div
-          className="absolute font-display font-bold whitespace-nowrap"
-          style={{
-            left: `${config.usernameX}%`,
-            top: `${config.usernameY}%`,
-            transform: 'translate(-50%, -50%)',
-            color: config.usernameColor,
-            fontSize: `${config.usernameFontSize}px`,
-            textShadow: `0 0 20px ${config.usernameColor}44`,
-            cursor: dragging?.type === 'username' ? 'grabbing' : 'grab',
-          }}
-          onPointerDown={(e) => { e.preventDefault(); handlePointerDown('username'); }}
-        >
-          @{username}
-        </div>
+        {/* Username - independent draggable */}
+        {config.showUsername && (
+          <div
+            className="absolute font-display font-bold whitespace-nowrap"
+            style={{
+              left: `${config.usernameX}%`,
+              top: `${config.usernameY}%`,
+              transform: 'translate(-50%, -50%)',
+              color: config.usernameColor,
+              fontSize: `${config.usernameFontSize}px`,
+              textShadow: `0 0 20px ${config.usernameColor}44`,
+              cursor: dragging?.type === 'username' ? 'grabbing' : 'grab',
+            }}
+            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('username'); }}
+          >
+            @{username}
+          </div>
+        )}
 
-        {/* Badges */}
+        {/* Badges - no square containers */}
         {bannerBadges.map((bb, i) => (
           <div
             key={bb.badge.id}
@@ -186,9 +194,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
             }}
             onPointerDown={(e) => { e.preventDefault(); handlePointerDown('badge', i); }}
           >
-            <div className={`w-14 h-14 rounded-xl border-2 flex items-center justify-center bg-black/40 backdrop-blur-sm ${RARITY_CONFIG[bb.badge.rarity].borderColor}`}>
-              <img src={bb.badge.icon} alt={bb.badge.name} className="w-10 h-10 object-contain" />
-            </div>
+            <img src={bb.badge.icon} alt={bb.badge.name} className="w-12 h-12 object-contain drop-shadow-lg" />
           </div>
         ))}
 
