@@ -307,16 +307,35 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
                   className="w-full accent-primary"
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <label className="text-xs font-mono text-muted-foreground">Show Avatar</label>
-                <button
-                  onClick={() => setConfig(p => ({ ...p, showAvatar: !p.showAvatar }))}
-                  className={`w-10 h-6 rounded-full transition-colors ${config.showAvatar ? 'bg-primary' : 'bg-muted'}`}
-                >
-                  <div className={`w-4 h-4 rounded-full bg-foreground transition-transform mx-1 ${config.showAvatar ? 'translate-x-4' : ''}`} />
-                </button>
+              <div>
+                <label className="text-xs font-mono text-muted-foreground mb-2 block">Avatar Size: {config.avatarSize}%</label>
+                <input
+                  type="range" min={3} max={20} step={0.5} value={config.avatarSize}
+                  onChange={e => setConfig(p => ({ ...p, avatarSize: Number(e.target.value) }))}
+                  className="w-full accent-primary"
+                />
               </div>
-              <p className="text-xs font-mono text-muted-foreground/60">Drag the username on the banner to reposition it</p>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3">
+                  <label className="text-xs font-mono text-muted-foreground">Show Username</label>
+                  <button
+                    onClick={() => setConfig(p => ({ ...p, showUsername: !p.showUsername }))}
+                    className={`w-10 h-6 rounded-full transition-colors ${config.showUsername ? 'bg-primary' : 'bg-muted'}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-foreground transition-transform mx-1 ${config.showUsername ? 'translate-x-4' : ''}`} />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="text-xs font-mono text-muted-foreground">Show Avatar</label>
+                  <button
+                    onClick={() => setConfig(p => ({ ...p, showAvatar: !p.showAvatar }))}
+                    className={`w-10 h-6 rounded-full transition-colors ${config.showAvatar ? 'bg-primary' : 'bg-muted'}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-foreground transition-transform mx-1 ${config.showAvatar ? 'translate-x-4' : ''}`} />
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs font-mono text-muted-foreground/60">Drag the username and avatar independently on the banner</p>
             </div>
           )}
 
