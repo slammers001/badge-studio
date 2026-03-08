@@ -71,7 +71,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     }));
   });
 
-  const [dragging, setDragging] = useState<{ type: 'badge' | 'username'; index?: number } | null>(null);
+  const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
 
   const handlePointerDown = useCallback((type: 'badge' | 'username', index?: number) => {
     setDragging({ type, index });
