@@ -231,22 +231,63 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
           </div>
         )}
 
-        {/* Badges - no square containers */}
-        {bannerBadges.map((bb, i) => (
-          <div
-            key={bb.badge.id}
-            className="absolute"
-            style={{
-              left: `${bb.x}%`,
-              top: `${bb.y}%`,
-              transform: `translate(-50%, -50%) scale(${bb.scale})`,
-              cursor: dragging?.type === 'badge' && dragging.index === i ? 'grabbing' : 'grab',
-            }}
-            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('badge', i); }}
-          >
-            <img src={bb.badge.icon} alt={bb.badge.name} className="w-12 h-12 object-contain drop-shadow-lg" />
-          </div>
-        ))}
+        {/* Badges with selection handles */}
+        {bannerBadges.map((bb, i) => {
+          const isSelected = selectedBadge === i;
+          return (
+            <div
+              key={bb.badge.id}
+              className="absolute"
+              style={{
+                left: `${bb.x}%`,
+                top: `${bb.y}%`,
+                transform: `translate(-50%, -50%) scale(${bb.scale}) rotate(${bb.rotation}deg)`,
+                cursor: dragging?.type === 'badge' && dragging.index === i ? 'grabbing' : 'grab',
+                zIndex: isSelected ? 10 : 1,
+              }}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                setSelectedBadge(i);
+                handlePointerDown('badge', i);
+              }}
+            >
+              <img src={bb.badge.icon} alt={bb.badge.name} className="w-12 h-12 object-contain drop-shadow-lg" />
+              
+              {/* Selection frame */}
+              {isSelected && (
+                <>
+                  {/* Dashed border */}
+                  <div className="absolute -inset-2 border-2 border-dashed rounded pointer-events-none" style={{ borderColor: 'hsl(var(--primary))' }} />
+                  
+                  {/* Corner resize handles */}
+                  {[
+                    { pos: '-top-3 -left-3', cursor: 'nwse-resize' },
+                    { pos: '-top-3 -right-3', cursor: 'nesw-resize' },
+                    { pos: '-bottom-3 -left-3', cursor: 'nesw-resize' },
+                    { pos: '-bottom-3 -right-3', cursor: 'nwse-resize' },
+                  ].map((handle, hi) => (
+                    <div
+                      key={hi}
+                      className={`absolute ${handle.pos} w-3 h-3 rounded-sm bg-primary border border-primary-foreground`}
+                      style={{ cursor: handle.cursor }}
+                      onPointerDown={(e) => handleResizeStart(e, i)}
+                    />
+                  ))}
+                  
+                  {/* Rotation handle */}
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                    <div
+                      className="w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground cursor-grab"
+                      style={{ cursor: rotating ? 'grabbing' : 'grab' }}
+                      onPointerDown={(e) => handleRotateStart(e, i)}
+                    />
+                    <div className="w-px h-3 bg-primary" />
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
 
         {/* Drag hint */}
         {!dragging && (
