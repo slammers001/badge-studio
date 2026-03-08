@@ -1,7 +1,20 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Github } from 'lucide-react';
+import { Github, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const HeroSection = () => {
+  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = username.trim();
+    if (trimmed) {
+      navigate(`/badges/${encodeURIComponent(trimmed)}`);
+    }
+  };
+
   return (
     <section className="relative w-full min-h-[70vh] flex flex-col items-center justify-center px-4 py-20 overflow-hidden">
       {/* Background effects */}
@@ -41,24 +54,29 @@ export const HeroSection = () => {
           Build your developer identity.
         </p>
 
-        {/* CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        {/* Username input */}
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+          <div className="relative flex-1 w-full">
+            <Github className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter GitHub username"
+              maxLength={39}
+              className="w-full pl-12 pr-4 py-3.5 rounded-xl font-mono text-sm bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+            />
+          </div>
           <motion.button
+            type="submit"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3.5 rounded-xl font-display font-semibold text-primary-foreground bg-primary glow-cyan transition-all"
+            className="px-6 py-3.5 rounded-xl font-display font-semibold text-primary-foreground bg-primary glow-cyan transition-all flex items-center gap-2 whitespace-nowrap"
           >
-            <Github className="inline w-5 h-5 mr-2 -mt-0.5" />
-            Connect GitHub
+            View Badges
+            <ArrowRight className="w-4 h-4" />
           </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3.5 rounded-xl font-display font-semibold text-foreground border border-border bg-card hover:border-primary/30 transition-all"
-          >
-            View Demo ↓
-          </motion.button>
-        </div>
+        </form>
 
         {/* Floating badge previews */}
         <div className="mt-16 flex items-center justify-center gap-6">
