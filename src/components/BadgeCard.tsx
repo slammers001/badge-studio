@@ -40,7 +40,7 @@ export const BadgeCard = ({ badge, onClick, size = 'md' }: BadgeCardProps) => {
       )}
       <div className={`${isLocked ? 'blur-sm grayscale' : ''} relative z-10 flex items-center justify-center`}>
         <img src={badge.icon} alt={badge.name} className={`${size === 'sm' ? 'w-10 h-10' : size === 'md' ? 'w-14 h-14' : 'w-20 h-20'} object-contain`} />
-      </span>
+      </div>
       <span className={`text-[10px] font-mono font-semibold mt-1 text-center leading-tight relative z-10 ${
         badge.earned ? 'text-foreground' : 'text-muted-foreground'
       }`}>

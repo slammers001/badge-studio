@@ -37,9 +37,9 @@ export const BadgeDetail = ({ badge, onClose }: BadgeDetailProps) => {
           <motion.div
             animate={badge.earned ? { y: [0, -6, 0] } : {}}
             transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            className="text-7xl mb-4"
+            className="mb-4 flex items-center justify-center"
           >
-            {badge.earned ? badge.icon : '🔒'}
+            <img src={badge.icon} alt={badge.name} className={`w-24 h-24 object-contain ${!badge.earned ? 'blur-sm grayscale' : ''}`} />
           </motion.div>
 
           <h3 className={`text-xl font-display font-bold mb-1 ${badge.earned ? 'text-foreground' : 'text-muted-foreground'}`}>
