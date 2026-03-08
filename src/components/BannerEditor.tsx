@@ -84,8 +84,29 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragging || !canvasRef.current) return;
+    if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
+
+    // Handle rotation
+    if (rotating) {
+      const bb = bannerBadges[rotating.index];
+      const centerX = rect.left + (bb.x / 100) * rect.width;
+      const centerY = rect.top + (bb.y / 100) * rect.height;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+      const delta = angle - rotating.startAngle;
+      setBannerBadges(prev => prev.map((b, i) => i === rotating.index ? { ...b, rotation: rotating.startRotation + delta } : b));
+      return;
+    }
+
+    // Handle resizing
+    if (resizing) {
+      const delta = (e.clientX - resizing.startX) / rect.width * 5;
+      const newScale = Math.max(0.3, Math.min(3, resizing.startScale + delta));
+      setBannerBadges(prev => prev.map((b, i) => i === resizing.index ? { ...b, scale: newScale } : b));
+      return;
+    }
+
+    if (!dragging) return;
     const x = Math.max(5, Math.min(95, ((e.clientX - rect.left) / rect.width) * 100));
     const y = Math.max(5, Math.min(95, ((e.clientY - rect.top) / rect.height) * 100));
 
@@ -96,7 +117,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     } else if (dragging.type === 'badge' && dragging.index !== undefined) {
       setBannerBadges(prev => prev.map((b, i) => i === dragging.index ? { ...b, x, y } : b));
     }
-  }, [dragging]);
+  }, [dragging, resizing, rotating, bannerBadges]);
 
   const handlePointerUp = useCallback(() => {
     setDragging(null);
