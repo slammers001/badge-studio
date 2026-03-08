@@ -277,6 +277,8 @@ const Profile = () => {
           <AnimatePresence>
             {selectedBadge && <BadgeDetail badge={selectedBadge} onClose={() => setSelectedBadge(null)} />}
           </AnimatePresence>
+          </>
+          )}
         </div>
       )}
     </div>
