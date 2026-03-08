@@ -98,10 +98,13 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       return;
     }
 
-    // Handle resizing
+    // Handle resizing - use distance from badge center
     if (resizing) {
-      const delta = (e.clientX - resizing.startX) / rect.width * 5;
-      const newScale = Math.max(0.3, Math.min(3, resizing.startScale + delta));
+      const bb = bannerBadges[resizing.index];
+      const centerX = rect.left + (bb.x / 100) * rect.width;
+      const centerY = rect.top + (bb.y / 100) * rect.height;
+      const dist = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+      const newScale = Math.max(0.3, Math.min(3, resizing.startScale * (dist / resizing.startDist)));
       setBannerBadges(prev => prev.map((b, i) => i === resizing.index ? { ...b, scale: newScale } : b));
       return;
     }
