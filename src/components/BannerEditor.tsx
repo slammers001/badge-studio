@@ -275,6 +275,14 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
                   className="w-full accent-primary"
                 />
               </div>
+              <div>
+                <label className="text-xs font-mono text-muted-foreground mb-2 block">Banner Scale: {config.bannerScale}%</label>
+                <input
+                  type="range" min={50} max={100} value={config.bannerScale}
+                  onChange={e => setConfig(p => ({ ...p, bannerScale: Number(e.target.value) }))}
+                  className="w-full accent-primary"
+                />
+              </div>
             </div>
           )}
 
