@@ -85,6 +85,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
 
     if (dragging.type === 'username') {
       setConfig(c => ({ ...c, usernameX: x, usernameY: y }));
+    } else if (dragging.type === 'avatar') {
+      setConfig(c => ({ ...c, avatarX: x, avatarY: y }));
     } else if (dragging.type === 'badge' && dragging.index !== undefined) {
       setBannerBadges(prev => prev.map((b, i) => i === dragging.index ? { ...b, x, y } : b));
     }
