@@ -15,10 +15,15 @@ interface BannerConfig {
   bgColor2: string;
   bgAngle: number;
   usernameColor: string;
-  usernameX: number; // percentage
-  usernameY: number; // percentage
+  usernameX: number;
+  usernameY: number;
   usernameFontSize: number;
   showAvatar: boolean;
+  showUsername: boolean;
+  avatarX: number;
+  avatarY: number;
+  avatarSize: number;
+  bannerScale: number;
 }
 
 const PRESET_COLORS = [
