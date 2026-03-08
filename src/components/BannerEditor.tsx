@@ -121,6 +121,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
 
   const handlePointerUp = useCallback(() => {
     setDragging(null);
+    setResizing(null);
+    setRotating(null);
   }, []);
 
   const resetLayout = () => {
@@ -131,8 +133,28 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       x: startX + (i % cols) * 10,
       y: 40 + Math.floor(i / cols) * 18,
       scale: 1,
+      rotation: 0,
     })));
     setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30 }));
+    setSelectedBadge(null);
+  };
+
+  const handleResizeStart = (e: React.PointerEvent, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setResizing({ index, startScale: bannerBadges[index].scale, startX: e.clientX });
+  };
+
+  const handleRotateStart = (e: React.PointerEvent, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const bb = bannerBadges[index];
+    const centerX = rect.left + (bb.x / 100) * rect.width;
+    const centerY = rect.top + (bb.y / 100) * rect.height;
+    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    setRotating({ index, startAngle, startRotation: bb.rotation });
   };
 
   const tabs = [
