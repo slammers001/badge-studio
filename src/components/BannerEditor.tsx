@@ -8,6 +8,7 @@ interface BannerBadge {
   x: number; // percentage 0-100
   y: number; // percentage 0-100
   scale: number;
+  rotation: number;
 }
 
 interface BannerConfig {
