@@ -15,10 +15,15 @@ interface BannerConfig {
   bgColor2: string;
   bgAngle: number;
   usernameColor: string;
-  usernameX: number; // percentage
-  usernameY: number; // percentage
+  usernameX: number;
+  usernameY: number;
   usernameFontSize: number;
   showAvatar: boolean;
+  showUsername: boolean;
+  avatarX: number;
+  avatarY: number;
+  avatarSize: number;
+  bannerScale: number;
 }
 
 const PRESET_COLORS = [
@@ -48,6 +53,11 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     usernameY: 15,
     usernameFontSize: 28,
     showAvatar: true,
+    showUsername: true,
+    avatarX: 15,
+    avatarY: 30,
+    avatarSize: 8,
+    bannerScale: 100,
   });
 
   const [bannerBadges, setBannerBadges] = useState<BannerBadge[]>(() => {
@@ -61,9 +71,9 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     }));
   });
 
-  const [dragging, setDragging] = useState<{ type: 'badge' | 'username'; index?: number } | null>(null);
+  const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
 
-  const handlePointerDown = useCallback((type: 'badge' | 'username', index?: number) => {
+  const handlePointerDown = useCallback((type: 'badge' | 'username' | 'avatar', index?: number) => {
     setDragging({ type, index });
   }, []);
 
@@ -75,6 +85,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
 
     if (dragging.type === 'username') {
       setConfig(c => ({ ...c, usernameX: x, usernameY: y }));
+    } else if (dragging.type === 'avatar') {
+      setConfig(c => ({ ...c, avatarX: x, avatarY: y }));
     } else if (dragging.type === 'badge' && dragging.index !== undefined) {
       setBannerBadges(prev => prev.map((b, i) => i === dragging.index ? { ...b, x, y } : b));
     }
@@ -93,7 +105,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       y: 40 + Math.floor(i / cols) * 18,
       scale: 1,
     })));
-    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15 }));
+    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30 }));
   };
 
   const tabs = [
@@ -124,44 +136,52 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
           aspectRatio: '3 / 1',
           background: `linear-gradient(${config.bgAngle}deg, ${config.bgColor1}, ${config.bgColor2})`,
           cursor: dragging ? 'grabbing' : 'default',
+          transform: `scale(${config.bannerScale / 100})`,
+          transformOrigin: 'top center',
         }}
       >
         {/* Grid overlay */}
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
 
-        {/* Avatar */}
+        {/* Avatar - independent draggable */}
         {config.showAvatar && (
           <div
-            className="absolute w-[8%] aspect-square rounded-full border-2 overflow-hidden pointer-events-none"
+            className="absolute rounded-full border-2 overflow-hidden"
             style={{
-              left: `${config.usernameX - 12}%`,
-              top: `${config.usernameY - 2}%`,
+              width: `${config.avatarSize}%`,
+              aspectRatio: '1',
+              left: `${config.avatarX}%`,
+              top: `${config.avatarY}%`,
               transform: 'translate(-50%, -50%)',
               borderColor: config.usernameColor,
+              cursor: dragging?.type === 'avatar' ? 'grabbing' : 'grab',
             }}
+            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('avatar'); }}
           >
             <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
           </div>
         )}
 
-        {/* Username */}
-        <div
-          className="absolute font-display font-bold whitespace-nowrap"
-          style={{
-            left: `${config.usernameX}%`,
-            top: `${config.usernameY}%`,
-            transform: 'translate(-50%, -50%)',
-            color: config.usernameColor,
-            fontSize: `${config.usernameFontSize}px`,
-            textShadow: `0 0 20px ${config.usernameColor}44`,
-            cursor: dragging?.type === 'username' ? 'grabbing' : 'grab',
-          }}
-          onPointerDown={(e) => { e.preventDefault(); handlePointerDown('username'); }}
-        >
-          @{username}
-        </div>
+        {/* Username - independent draggable */}
+        {config.showUsername && (
+          <div
+            className="absolute font-display font-bold whitespace-nowrap"
+            style={{
+              left: `${config.usernameX}%`,
+              top: `${config.usernameY}%`,
+              transform: 'translate(-50%, -50%)',
+              color: config.usernameColor,
+              fontSize: `${config.usernameFontSize}px`,
+              textShadow: `0 0 20px ${config.usernameColor}44`,
+              cursor: dragging?.type === 'username' ? 'grabbing' : 'grab',
+            }}
+            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('username'); }}
+          >
+            @{username}
+          </div>
+        )}
 
-        {/* Badges */}
+        {/* Badges - no square containers */}
         {bannerBadges.map((bb, i) => (
           <div
             key={bb.badge.id}
@@ -174,9 +194,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
             }}
             onPointerDown={(e) => { e.preventDefault(); handlePointerDown('badge', i); }}
           >
-            <div className={`w-14 h-14 rounded-xl border-2 flex items-center justify-center bg-black/40 backdrop-blur-sm ${RARITY_CONFIG[bb.badge.rarity].borderColor}`}>
-              <img src={bb.badge.icon} alt={bb.badge.name} className="w-10 h-10 object-contain" />
-            </div>
+            <img src={bb.badge.icon} alt={bb.badge.name} className="w-12 h-12 object-contain drop-shadow-lg" />
           </div>
         ))}
 
@@ -257,6 +275,14 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
                   className="w-full accent-primary"
                 />
               </div>
+              <div>
+                <label className="text-xs font-mono text-muted-foreground mb-2 block">Banner Scale: {config.bannerScale}%</label>
+                <input
+                  type="range" min={50} max={100} value={config.bannerScale}
+                  onChange={e => setConfig(p => ({ ...p, bannerScale: Number(e.target.value) }))}
+                  className="w-full accent-primary"
+                />
+              </div>
             </div>
           )}
 
@@ -289,16 +315,35 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
                   className="w-full accent-primary"
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <label className="text-xs font-mono text-muted-foreground">Show Avatar</label>
-                <button
-                  onClick={() => setConfig(p => ({ ...p, showAvatar: !p.showAvatar }))}
-                  className={`w-10 h-6 rounded-full transition-colors ${config.showAvatar ? 'bg-primary' : 'bg-muted'}`}
-                >
-                  <div className={`w-4 h-4 rounded-full bg-foreground transition-transform mx-1 ${config.showAvatar ? 'translate-x-4' : ''}`} />
-                </button>
+              <div>
+                <label className="text-xs font-mono text-muted-foreground mb-2 block">Avatar Size: {config.avatarSize}%</label>
+                <input
+                  type="range" min={3} max={20} step={0.5} value={config.avatarSize}
+                  onChange={e => setConfig(p => ({ ...p, avatarSize: Number(e.target.value) }))}
+                  className="w-full accent-primary"
+                />
               </div>
-              <p className="text-xs font-mono text-muted-foreground/60">Drag the username on the banner to reposition it</p>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3">
+                  <label className="text-xs font-mono text-muted-foreground">Show Username</label>
+                  <button
+                    onClick={() => setConfig(p => ({ ...p, showUsername: !p.showUsername }))}
+                    className={`w-10 h-6 rounded-full transition-colors ${config.showUsername ? 'bg-primary' : 'bg-muted'}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-foreground transition-transform mx-1 ${config.showUsername ? 'translate-x-4' : ''}`} />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="text-xs font-mono text-muted-foreground">Show Avatar</label>
+                  <button
+                    onClick={() => setConfig(p => ({ ...p, showAvatar: !p.showAvatar }))}
+                    className={`w-10 h-6 rounded-full transition-colors ${config.showAvatar ? 'bg-primary' : 'bg-muted'}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-foreground transition-transform mx-1 ${config.showAvatar ? 'translate-x-4' : ''}`} />
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs font-mono text-muted-foreground/60">Drag the username and avatar independently on the banner</p>
             </div>
           )}
 
