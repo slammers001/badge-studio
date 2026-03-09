@@ -24,6 +24,8 @@ interface BannerConfig {
   avatarX: number;
   avatarY: number;
   avatarSize: number;
+  avatarScale: number;
+  avatarRotation: number;
   bannerScale: number;
 }
 
