@@ -68,7 +68,7 @@ function generateBadges(user: GitHubUser, repos: GitHubRepo[], events: GitHubEve
 
   // Languages
   badges.push({
-    id: 'typescript', name: 'TypeScript Titan', description: 'Used TypeScript in repos',
+    id: 'typescript', name: 'TypeScript Tamer', description: 'Used TypeScript in repos',
     icon: '/badges/typescript.png', category: 'languages', rarity: 'uncommon', earned: languages.has('TypeScript'),
   });
   badges.push({
