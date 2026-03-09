@@ -457,7 +457,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         {/* Drag hint */}
         {/* Watermark */}
         <div className="absolute bottom-2 right-3 text-[10px] font-mono text-white/30 pointer-events-none">
-          badge-studio
+          github.com/slammers001/badge-studio
         </div>
       </div>
 
