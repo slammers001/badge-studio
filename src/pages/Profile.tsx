@@ -160,9 +160,7 @@ const Profile = () => {
   });
 
   const badges = data ? generateBadges(data.user, data.repos, data.events) : [];
-  const filteredBadges = activeCategory === 'all' ? badges : badges.filter(b => b.category === activeCategory);
   const earnedCount = badges.filter(b => b.earned).length;
-  const categories = Object.entries(CATEGORY_CONFIG) as [BadgeCategory, typeof CATEGORY_CONFIG[BadgeCategory]][];
 
   return (
     <div className="min-h-screen bg-background">
