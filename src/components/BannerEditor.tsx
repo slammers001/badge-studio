@@ -167,8 +167,31 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       scale: 1,
       rotation: 0,
     })));
-    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30 }));
+    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30, avatarScale: 1, avatarRotation: 0 }));
     setSelectedBadge(null);
+    setSelectedAvatar(false);
+  };
+
+  const handleAvatarResizeStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const centerX = rect.left + (config.avatarX / 100) * rect.width;
+    const centerY = rect.top + (config.avatarY / 100) * rect.height;
+    const startDist = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+    setAvatarResizing({ startScale: config.avatarScale, startDist: Math.max(startDist, 1) });
+  };
+
+  const handleAvatarRotateStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const centerX = rect.left + (config.avatarX / 100) * rect.width;
+    const centerY = rect.top + (config.avatarY / 100) * rect.height;
+    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    setAvatarRotating({ startAngle, startRotation: config.avatarRotation });
   };
 
   const handleResizeStart = (e: React.PointerEvent, index: number) => {
