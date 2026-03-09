@@ -60,6 +60,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     avatarX: 15,
     avatarY: 30,
     avatarSize: 8,
+    avatarScale: 1,
+    avatarRotation: 0,
     bannerScale: 100,
   });
 
