@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { BadgeCard } from '@/components/BadgeCard';
 import { BadgeDetail } from '@/components/BadgeDetail';
 import { BannerEditor } from '@/components/BannerEditor';
-import { type GitBadge, type BadgeCategory, CATEGORY_CONFIG } from '@/data/badges';
+import { type GitBadge } from '@/data/badges';
 
 interface GitHubUser {
   login: string;
