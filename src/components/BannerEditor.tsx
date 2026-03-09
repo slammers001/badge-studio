@@ -78,8 +78,11 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   });
 
   const [selectedBadge, setSelectedBadge] = useState<number | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(false);
   const [resizing, setResizing] = useState<{ index: number; startScale: number; startDist: number } | null>(null);
   const [rotating, setRotating] = useState<{ index: number; startAngle: number; startRotation: number } | null>(null);
+  const [avatarResizing, setAvatarResizing] = useState<{ startScale: number; startDist: number } | null>(null);
+  const [avatarRotating, setAvatarRotating] = useState<{ startAngle: number; startRotation: number } | null>(null);
 
   const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
 
