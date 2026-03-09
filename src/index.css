@@ -80,6 +80,19 @@
   code, .font-mono {
     font-family: var(--font-mono);
   }
+
+  /* Custom text selection styling */
+  ::selection {
+    background-color: #00EAFF80;
+    color: #ffffff;
+    text-shadow: 0 0 8px #00EAFF;
+  }
+
+  ::-moz-selection {
+    background-color: #00EAFF80;
+    color: #ffffff;
+    text-shadow: 0 0 8px #00EAFF;
+  }
 }
 
 @layer utilities {
