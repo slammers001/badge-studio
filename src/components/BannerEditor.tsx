@@ -176,14 +176,14 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   const randomizeLayout = () => {
     const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
     
-    // Calculate grid cells to spread badges evenly
+    // Calculate grid cells to spread badges evenly across full canvas
     const badgeCount = earnedBadges.length;
-    const cols = Math.ceil(Math.sqrt(badgeCount * 3)); // More columns than rows for banner aspect ratio
+    const cols = Math.ceil(Math.sqrt(badgeCount * 4)); // More columns for banner aspect ratio (3:1)
     const rows = Math.ceil(badgeCount / cols);
     
-    // Define usable area (leaving margins)
-    const minX = 10, maxX = 90;
-    const minY = 25, maxY = 90;
+    // Use nearly full canvas area for maximum spread
+    const minX = 5, maxX = 95;
+    const minY = 10, maxY = 95;
     const cellWidth = (maxX - minX) / cols;
     const cellHeight = (maxY - minY) / rows;
     
@@ -199,9 +199,9 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       const col = gridIndex % cols;
       const row = Math.floor(gridIndex / cols);
       
-      // Place within cell with some random jitter
-      const jitterX = (Math.random() - 0.5) * cellWidth * 0.5;
-      const jitterY = (Math.random() - 0.5) * cellHeight * 0.5;
+      // Small jitter for natural look without causing overlap
+      const jitterX = (Math.random() - 0.5) * cellWidth * 0.3;
+      const jitterY = (Math.random() - 0.5) * cellHeight * 0.3;
       
       return {
         badge,
