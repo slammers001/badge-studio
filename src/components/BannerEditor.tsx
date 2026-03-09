@@ -255,6 +255,9 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-display font-bold text-foreground">Banner Editor</h2>
         <div className="flex gap-2">
+          <button onClick={randomizeLayout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+            <Shuffle className="w-4 h-4" /> Random
+          </button>
           <button onClick={resetLayout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono border border-border bg-card text-muted-foreground hover:text-foreground transition-colors">
             <RotateCcw className="w-4 h-4" /> Reset
           </button>
