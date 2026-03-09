@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Palette, Type, Move, RotateCcw, Download } from 'lucide-react';
+import { Palette, Type, Move, RotateCcw, Shuffle } from 'lucide-react';
 import { type GitBadge, RARITY_CONFIG } from '@/data/badges';
 
 interface BannerBadge {
@@ -172,6 +172,34 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     setSelectedAvatar(false);
   };
 
+  const randomizeLayout = () => {
+    const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+    
+    setBannerBadges(earnedBadges.map((badge) => ({
+      badge,
+      x: 10 + Math.random() * 80,
+      y: 15 + Math.random() * 70,
+      scale: 0.6 + Math.random() * 1.2,
+      rotation: Math.random() * 360 - 180,
+    })));
+    
+    setConfig(c => ({
+      ...c,
+      bgColor1: randomColor(),
+      bgColor2: randomColor(),
+      bgAngle: Math.floor(Math.random() * 360),
+      usernameX: 20 + Math.random() * 60,
+      usernameY: 10 + Math.random() * 25,
+      avatarX: 10 + Math.random() * 80,
+      avatarY: 15 + Math.random() * 70,
+      avatarScale: 0.7 + Math.random() * 0.8,
+      avatarRotation: Math.random() * 40 - 20,
+    }));
+    
+    setSelectedBadge(null);
+    setSelectedAvatar(false);
+  };
+
   const handleAvatarResizeStart = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -229,6 +257,9 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-display font-bold text-foreground">Banner Editor</h2>
         <div className="flex gap-2">
+          <button onClick={randomizeLayout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+            <Shuffle className="w-4 h-4" /> Random
+          </button>
           <button onClick={resetLayout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono border border-border bg-card text-muted-foreground hover:text-foreground transition-colors">
             <RotateCcw className="w-4 h-4" /> Reset
           </button>
