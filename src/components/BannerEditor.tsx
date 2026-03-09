@@ -86,6 +86,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   const [avatarRotating, setAvatarRotating] = useState<{ startAngle: number; startRotation: number } | null>(null);
 
   const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
+  const [useDisplayName, setUseDisplayName] = useState(false);
 
   const handlePointerDown = useCallback((type: 'badge' | 'username' | 'avatar', index?: number) => {
     setDragging({ type, index });
@@ -423,7 +424,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
             }}
             onPointerDown={(e) => { e.preventDefault(); handlePointerDown('username'); }}
           >
-            @{username}
+            {useDisplayName ? displayName : `@${username}`}
           </div>
         )}
 
@@ -574,6 +575,23 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
 
           {activeTab === 'username' && (
             <div className="space-y-4">
+              <div>
+                <label className="text-xs font-mono text-muted-foreground mb-2 block">Display Text</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setUseDisplayName(false)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-mono border transition-all ${!useDisplayName ? 'border-primary bg-primary/20 text-primary' : 'border-border text-muted-foreground hover:text-foreground'}`}
+                  >
+                    @{username}
+                  </button>
+                  <button
+                    onClick={() => setUseDisplayName(true)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-mono border transition-all ${useDisplayName ? 'border-primary bg-primary/20 text-primary' : 'border-border text-muted-foreground hover:text-foreground'}`}
+                  >
+                    {displayName}
+                  </button>
+                </div>
+              </div>
               <div>
                 <label className="text-xs font-mono text-muted-foreground mb-2 block">Text Color</label>
                 <div className="flex flex-wrap gap-2">
