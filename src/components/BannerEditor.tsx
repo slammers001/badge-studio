@@ -576,6 +576,23 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
           {activeTab === 'username' && (
             <div className="space-y-4">
               <div>
+                <label className="text-xs font-mono text-muted-foreground mb-2 block">Display Text</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setUseDisplayName(false)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-mono border transition-all ${!useDisplayName ? 'border-primary bg-primary/20 text-primary' : 'border-border text-muted-foreground hover:text-foreground'}`}
+                  >
+                    @{username}
+                  </button>
+                  <button
+                    onClick={() => setUseDisplayName(true)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-mono border transition-all ${useDisplayName ? 'border-primary bg-primary/20 text-primary' : 'border-border text-muted-foreground hover:text-foreground'}`}
+                  >
+                    {displayName}
+                  </button>
+                </div>
+              </div>
+              <div>
                 <label className="text-xs font-mono text-muted-foreground mb-2 block">Text Color</label>
                 <div className="flex flex-wrap gap-2">
                   {['#00e5ff', '#ff00e5', '#e5ff00', '#00ff88', '#ffffff', '#ff8800', '#8800ff', '#ff4444'].map(c => (
