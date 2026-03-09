@@ -98,7 +98,7 @@ function generateBadges(user: GitHubUser, repos: GitHubRepo[], events: GitHubEve
     icon: '/badges/solobuilder.png', category: 'projects', rarity: 'uncommon', earned: ownRepos.length >= 5,
   });
   badges.push({
-    id: 'deep-learner', name: 'Deep Learner', description: '10+ public repositories',
+    id: 'deep-learner', name: 'Deep Learning Guru', description: '10+ public repositories',
     icon: '/badges/deeplearning.png', category: 'projects', rarity: 'common', earned: user.public_repos >= 10,
   });
   badges.push({

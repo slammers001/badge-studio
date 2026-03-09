@@ -254,22 +254,67 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         {/* Grid overlay */}
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
 
-        {/* Avatar - independent draggable */}
+        {/* Avatar - independent draggable with selection handles */}
         {config.showAvatar && (
           <div
-            className="absolute rounded-full border-2 overflow-hidden"
+            className="absolute"
             style={{
-              width: `${config.avatarSize}%`,
-              aspectRatio: '1',
               left: `${config.avatarX}%`,
               top: `${config.avatarY}%`,
-              transform: 'translate(-50%, -50%)',
-              borderColor: config.usernameColor,
+              transform: `translate(-50%, -50%) scale(${config.avatarScale}) rotate(${config.avatarRotation}deg)`,
               cursor: dragging?.type === 'avatar' ? 'grabbing' : 'grab',
+              zIndex: selectedAvatar ? 10 : 1,
             }}
-            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('avatar'); }}
+            onPointerDown={(e) => {
+              e.preventDefault();
+              setSelectedAvatar(true);
+              setSelectedBadge(null);
+              handlePointerDown('avatar');
+            }}
           >
-            <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+            <div
+              className="rounded-full border-2 overflow-hidden"
+              style={{
+                width: `${config.avatarSize * 6}px`,
+                height: `${config.avatarSize * 6}px`,
+                borderColor: config.usernameColor,
+              }}
+            >
+              <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+            </div>
+
+            {/* Selection frame for avatar */}
+            {selectedAvatar && (
+              <>
+                {/* Dashed border */}
+                <div className="absolute -inset-2 border-2 border-dashed rounded-full pointer-events-none" style={{ borderColor: 'hsl(var(--primary))' }} />
+                
+                {/* Corner resize handles */}
+                {[
+                  { pos: '-top-3 -left-3', cursor: 'nwse-resize' },
+                  { pos: '-top-3 -right-3', cursor: 'nesw-resize' },
+                  { pos: '-bottom-3 -left-3', cursor: 'nesw-resize' },
+                  { pos: '-bottom-3 -right-3', cursor: 'nwse-resize' },
+                ].map((handle, hi) => (
+                  <div
+                    key={hi}
+                    className={`absolute ${handle.pos} w-3 h-3 rounded-sm bg-primary border border-primary-foreground`}
+                    style={{ cursor: handle.cursor }}
+                    onPointerDown={handleAvatarResizeStart}
+                  />
+                ))}
+                
+                {/* Rotation handle */}
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                  <div
+                    className="w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground cursor-grab"
+                    style={{ cursor: avatarRotating ? 'grabbing' : 'grab' }}
+                    onPointerDown={handleAvatarRotateStart}
+                  />
+                  <div className="w-px h-3 bg-primary" />
+                </div>
+              </>
+            )}
           </div>
         )}
 
