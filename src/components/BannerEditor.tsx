@@ -94,6 +94,26 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
 
+    // Handle avatar rotation
+    if (avatarRotating) {
+      const centerX = rect.left + (config.avatarX / 100) * rect.width;
+      const centerY = rect.top + (config.avatarY / 100) * rect.height;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+      const delta = angle - avatarRotating.startAngle;
+      setConfig(c => ({ ...c, avatarRotation: avatarRotating.startRotation + delta }));
+      return;
+    }
+
+    // Handle avatar resizing
+    if (avatarResizing) {
+      const centerX = rect.left + (config.avatarX / 100) * rect.width;
+      const centerY = rect.top + (config.avatarY / 100) * rect.height;
+      const dist = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+      const newScale = Math.max(0.3, Math.min(3, avatarResizing.startScale * (dist / avatarResizing.startDist)));
+      setConfig(c => ({ ...c, avatarScale: newScale }));
+      return;
+    }
+
     // Handle rotation
     if (rotating) {
       const bb = bannerBadges[rotating.index];
@@ -127,7 +147,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     } else if (dragging.type === 'badge' && dragging.index !== undefined) {
       setBannerBadges(prev => prev.map((b, i) => i === dragging.index ? { ...b, x, y } : b));
     }
-  }, [dragging, resizing, rotating, bannerBadges]);
+  }, [dragging, resizing, rotating, bannerBadges, avatarRotating, avatarResizing, config.avatarX, config.avatarY]);
 
   const handlePointerUp = useCallback(() => {
     setDragging(null);
