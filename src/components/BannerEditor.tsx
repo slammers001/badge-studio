@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Palette, Type, Move, RotateCcw, Shuffle } from 'lucide-react';
+import { Palette, Type, Move, RotateCcw, Shuffle, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import { type GitBadge, RARITY_CONFIG } from '@/data/badges';
 
 interface BannerBadge {
