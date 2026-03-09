@@ -24,6 +24,8 @@ interface BannerConfig {
   avatarX: number;
   avatarY: number;
   avatarSize: number;
+  avatarScale: number;
+  avatarRotation: number;
   bannerScale: number;
 }
 
@@ -58,6 +60,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     avatarX: 15,
     avatarY: 30,
     avatarSize: 8,
+    avatarScale: 1,
+    avatarRotation: 0,
     bannerScale: 100,
   });
 
@@ -74,8 +78,11 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   });
 
   const [selectedBadge, setSelectedBadge] = useState<number | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(false);
   const [resizing, setResizing] = useState<{ index: number; startScale: number; startDist: number } | null>(null);
   const [rotating, setRotating] = useState<{ index: number; startAngle: number; startRotation: number } | null>(null);
+  const [avatarResizing, setAvatarResizing] = useState<{ startScale: number; startDist: number } | null>(null);
+  const [avatarRotating, setAvatarRotating] = useState<{ startAngle: number; startRotation: number } | null>(null);
 
   const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
 
@@ -86,6 +93,26 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
+
+    // Handle avatar rotation
+    if (avatarRotating) {
+      const centerX = rect.left + (config.avatarX / 100) * rect.width;
+      const centerY = rect.top + (config.avatarY / 100) * rect.height;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+      const delta = angle - avatarRotating.startAngle;
+      setConfig(c => ({ ...c, avatarRotation: avatarRotating.startRotation + delta }));
+      return;
+    }
+
+    // Handle avatar resizing
+    if (avatarResizing) {
+      const centerX = rect.left + (config.avatarX / 100) * rect.width;
+      const centerY = rect.top + (config.avatarY / 100) * rect.height;
+      const dist = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+      const newScale = Math.max(0.3, Math.min(3, avatarResizing.startScale * (dist / avatarResizing.startDist)));
+      setConfig(c => ({ ...c, avatarScale: newScale }));
+      return;
+    }
 
     // Handle rotation
     if (rotating) {
@@ -120,12 +147,14 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     } else if (dragging.type === 'badge' && dragging.index !== undefined) {
       setBannerBadges(prev => prev.map((b, i) => i === dragging.index ? { ...b, x, y } : b));
     }
-  }, [dragging, resizing, rotating, bannerBadges]);
+  }, [dragging, resizing, rotating, bannerBadges, avatarRotating, avatarResizing, config.avatarX, config.avatarY]);
 
   const handlePointerUp = useCallback(() => {
     setDragging(null);
     setResizing(null);
     setRotating(null);
+    setAvatarResizing(null);
+    setAvatarRotating(null);
   }, []);
 
   const resetLayout = () => {
@@ -138,8 +167,31 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       scale: 1,
       rotation: 0,
     })));
-    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30 }));
+    setConfig(c => ({ ...c, usernameX: 50, usernameY: 15, avatarX: 15, avatarY: 30, avatarScale: 1, avatarRotation: 0 }));
     setSelectedBadge(null);
+    setSelectedAvatar(false);
+  };
+
+  const handleAvatarResizeStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const centerX = rect.left + (config.avatarX / 100) * rect.width;
+    const centerY = rect.top + (config.avatarY / 100) * rect.height;
+    const startDist = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+    setAvatarResizing({ startScale: config.avatarScale, startDist: Math.max(startDist, 1) });
+  };
+
+  const handleAvatarRotateStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const centerX = rect.left + (config.avatarX / 100) * rect.width;
+    const centerY = rect.top + (config.avatarY / 100) * rect.height;
+    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    setAvatarRotating({ startAngle, startRotation: config.avatarRotation });
   };
 
   const handleResizeStart = (e: React.PointerEvent, index: number) => {
@@ -189,7 +241,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onClick={(e) => { if (e.target === canvasRef.current || (e.target as HTMLElement).classList.contains('bg-grid')) setSelectedBadge(null); }}
+        onClick={(e) => { if (e.target === canvasRef.current || (e.target as HTMLElement).classList.contains('bg-grid')) { setSelectedBadge(null); setSelectedAvatar(false); } }}
         className="relative w-full rounded-2xl border-2 border-border overflow-hidden select-none"
         style={{
           aspectRatio: '3 / 1',
@@ -202,22 +254,67 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         {/* Grid overlay */}
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
 
-        {/* Avatar - independent draggable */}
+        {/* Avatar - independent draggable with selection handles */}
         {config.showAvatar && (
           <div
-            className="absolute rounded-full border-2 overflow-hidden"
+            className="absolute"
             style={{
-              width: `${config.avatarSize}%`,
-              aspectRatio: '1',
               left: `${config.avatarX}%`,
               top: `${config.avatarY}%`,
-              transform: 'translate(-50%, -50%)',
-              borderColor: config.usernameColor,
+              transform: `translate(-50%, -50%) scale(${config.avatarScale}) rotate(${config.avatarRotation}deg)`,
               cursor: dragging?.type === 'avatar' ? 'grabbing' : 'grab',
+              zIndex: selectedAvatar ? 10 : 1,
             }}
-            onPointerDown={(e) => { e.preventDefault(); handlePointerDown('avatar'); }}
+            onPointerDown={(e) => {
+              e.preventDefault();
+              setSelectedAvatar(true);
+              setSelectedBadge(null);
+              handlePointerDown('avatar');
+            }}
           >
-            <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+            <div
+              className="rounded-full border-2 overflow-hidden"
+              style={{
+                width: `${config.avatarSize * 6}px`,
+                height: `${config.avatarSize * 6}px`,
+                borderColor: config.usernameColor,
+              }}
+            >
+              <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+            </div>
+
+            {/* Selection frame for avatar */}
+            {selectedAvatar && (
+              <>
+                {/* Dashed border */}
+                <div className="absolute -inset-2 border-2 border-dashed rounded-full pointer-events-none" style={{ borderColor: 'hsl(var(--primary))' }} />
+                
+                {/* Corner resize handles */}
+                {[
+                  { pos: '-top-3 -left-3', cursor: 'nwse-resize' },
+                  { pos: '-top-3 -right-3', cursor: 'nesw-resize' },
+                  { pos: '-bottom-3 -left-3', cursor: 'nesw-resize' },
+                  { pos: '-bottom-3 -right-3', cursor: 'nwse-resize' },
+                ].map((handle, hi) => (
+                  <div
+                    key={hi}
+                    className={`absolute ${handle.pos} w-3 h-3 rounded-sm bg-primary border border-primary-foreground`}
+                    style={{ cursor: handle.cursor }}
+                    onPointerDown={handleAvatarResizeStart}
+                  />
+                ))}
+                
+                {/* Rotation handle */}
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                  <div
+                    className="w-4 h-4 rounded-full bg-primary border-2 border-primary-foreground cursor-grab"
+                    style={{ cursor: avatarRotating ? 'grabbing' : 'grab' }}
+                    onPointerDown={handleAvatarRotateStart}
+                  />
+                  <div className="w-px h-3 bg-primary" />
+                </div>
+              </>
+            )}
           </div>
         )}
 

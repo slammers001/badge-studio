@@ -45,11 +45,11 @@ function generateBadges(user: GitHubUser, repos: GitHubRepo[], events: GitHubEve
 
   // Commits
   badges.push({
-    id: 'first-commit', name: 'First Blood', description: 'Made your first commit',
+    id: 'first-commit', name: 'Commit Ninja', description: 'Made your first commit',
     icon: '/badges/commit.png', category: 'commits', rarity: 'common', earned: pushEvents.length > 0,
   });
   badges.push({
-    id: 'commit-ninja', name: 'Commit Ninja', description: '10+ push events recently',
+    id: 'commit-ninja', name: 'Mean Merge Machine', description: '10+ push events recently',
     icon: '/badges/merge.png', category: 'commits', rarity: 'uncommon', earned: pushEvents.length >= 10,
   });
   badges.push({
@@ -68,7 +68,7 @@ function generateBadges(user: GitHubUser, repos: GitHubRepo[], events: GitHubEve
 
   // Languages
   badges.push({
-    id: 'typescript', name: 'TypeScript Titan', description: 'Used TypeScript in repos',
+    id: 'typescript', name: 'TypeScript Tamer', description: 'Used TypeScript in repos',
     icon: '/badges/typescript.png', category: 'languages', rarity: 'uncommon', earned: languages.has('TypeScript'),
   });
   badges.push({
@@ -98,7 +98,7 @@ function generateBadges(user: GitHubUser, repos: GitHubRepo[], events: GitHubEve
     icon: '/badges/solobuilder.png', category: 'projects', rarity: 'uncommon', earned: ownRepos.length >= 5,
   });
   badges.push({
-    id: 'deep-learner', name: 'Deep Learner', description: '10+ public repositories',
+    id: 'deep-learner', name: 'Deep Learning Guru', description: '10+ public repositories',
     icon: '/badges/deeplearning.png', category: 'projects', rarity: 'common', earned: user.public_repos >= 10,
   });
   badges.push({
