@@ -5,13 +5,17 @@ import { useNavigate } from 'react-router-dom';
 
 export const HeroSection = () => {
   const [username, setUsername] = useState('');
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = username.trim();
     if (trimmed) {
+      setError(false);
       navigate(`/badges/${encodeURIComponent(trimmed)}`);
+    } else {
+      setError(true);
     }
   };
 
