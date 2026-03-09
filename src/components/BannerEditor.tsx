@@ -172,7 +172,33 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     setSelectedAvatar(false);
   };
 
-  const handleAvatarResizeStart = (e: React.PointerEvent) => {
+  const randomizeLayout = () => {
+    const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+    
+    setBannerBadges(earnedBadges.map((badge) => ({
+      badge,
+      x: 10 + Math.random() * 80,
+      y: 15 + Math.random() * 70,
+      scale: 0.6 + Math.random() * 1.2,
+      rotation: Math.random() * 360 - 180,
+    })));
+    
+    setConfig(c => ({
+      ...c,
+      bgColor1: randomColor(),
+      bgColor2: randomColor(),
+      bgAngle: Math.floor(Math.random() * 360),
+      usernameX: 20 + Math.random() * 60,
+      usernameY: 10 + Math.random() * 25,
+      avatarX: 10 + Math.random() * 80,
+      avatarY: 15 + Math.random() * 70,
+      avatarScale: 0.7 + Math.random() * 0.8,
+      avatarRotation: Math.random() * 40 - 20,
+    }));
+    
+    setSelectedBadge(null);
+    setSelectedAvatar(false);
+  };
     e.preventDefault();
     e.stopPropagation();
     if (!canvasRef.current) return;
