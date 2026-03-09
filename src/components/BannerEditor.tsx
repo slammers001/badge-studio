@@ -175,13 +175,41 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   const randomizeLayout = () => {
     const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
     
-    setBannerBadges(earnedBadges.map((badge) => ({
-      badge,
-      x: 10 + Math.random() * 80,
-      y: 15 + Math.random() * 70,
-      scale: 0.6 + Math.random() * 1.2,
-      rotation: Math.random() * 360 - 180,
-    })));
+    // Calculate grid cells to spread badges evenly
+    const badgeCount = earnedBadges.length;
+    const cols = Math.ceil(Math.sqrt(badgeCount * 3)); // More columns than rows for banner aspect ratio
+    const rows = Math.ceil(badgeCount / cols);
+    
+    // Define usable area (leaving margins)
+    const minX = 10, maxX = 90;
+    const minY = 25, maxY = 90;
+    const cellWidth = (maxX - minX) / cols;
+    const cellHeight = (maxY - minY) / rows;
+    
+    // Shuffle indices for random placement in grid
+    const indices = Array.from({ length: badgeCount }, (_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    
+    setBannerBadges(earnedBadges.map((badge, i) => {
+      const gridIndex = indices[i];
+      const col = gridIndex % cols;
+      const row = Math.floor(gridIndex / cols);
+      
+      // Place within cell with some random jitter
+      const jitterX = (Math.random() - 0.5) * cellWidth * 0.5;
+      const jitterY = (Math.random() - 0.5) * cellHeight * 0.5;
+      
+      return {
+        badge,
+        x: minX + cellWidth * (col + 0.5) + jitterX,
+        y: minY + cellHeight * (row + 0.5) + jitterY,
+        scale: 0.7 + Math.random() * 0.8,
+        rotation: Math.random() * 60 - 30,
+      };
+    }));
     
     setConfig(c => ({
       ...c,
@@ -189,11 +217,11 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       bgColor2: randomColor(),
       bgAngle: Math.floor(Math.random() * 360),
       usernameX: 20 + Math.random() * 60,
-      usernameY: 10 + Math.random() * 25,
-      avatarX: 10 + Math.random() * 80,
-      avatarY: 15 + Math.random() * 70,
-      avatarScale: 0.7 + Math.random() * 0.8,
-      avatarRotation: Math.random() * 40 - 20,
+      usernameY: 8 + Math.random() * 12,
+      avatarX: 8 + Math.random() * 15,
+      avatarY: 20 + Math.random() * 20,
+      avatarScale: 0.7 + Math.random() * 0.6,
+      avatarRotation: Math.random() * 30 - 15,
     }));
     
     setSelectedBadge(null);
