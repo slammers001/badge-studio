@@ -149,7 +149,7 @@ const Profile = () => {
   const { username } = useParams<{ username: string }>();
   const navigate = useNavigate();
   const [selectedBadge, setSelectedBadge] = useState<GitBadge | null>(null);
-  const [activeCategory, setActiveCategory] = useState<BadgeCategory | 'all'>('all');
+  const [showBanner, setShowBanner] = useState(true);
   const [showBanner, setShowBanner] = useState(true);
 
   const { data, isLoading, error } = useQuery({
