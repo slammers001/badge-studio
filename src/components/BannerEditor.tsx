@@ -229,6 +229,33 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     setSelectedAvatar(false);
   };
 
+  const exportBanner = async () => {
+    if (!canvasRef.current) return;
+    
+    // Hide selection UI before export
+    setSelectedBadge(null);
+    setSelectedAvatar(false);
+    
+    // Wait for state update
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    try {
+      const canvas = await html2canvas(canvasRef.current, {
+        backgroundColor: null,
+        scale: 2, // Higher resolution
+        useCORS: true,
+        allowTaint: true,
+      });
+      
+      const link = document.createElement('a');
+      link.download = `${username}-github-banner.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (error) {
+      console.error('Export failed:', error);
+    }
+  };
+
   const handleAvatarResizeStart = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -286,6 +313,9 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-display font-bold text-foreground">Banner Editor</h2>
         <div className="flex gap-2">
+          <button onClick={exportBanner} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono border border-green-500/30 bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors">
+            <Download className="w-4 h-4" /> Export
+          </button>
           <button onClick={randomizeLayout} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
             <Shuffle className="w-4 h-4" /> Random
           </button>
