@@ -153,6 +153,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     setDragging(null);
     setResizing(null);
     setRotating(null);
+    setAvatarResizing(null);
+    setAvatarRotating(null);
   }, []);
 
   const resetLayout = () => {
