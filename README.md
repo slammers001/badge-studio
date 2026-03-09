@@ -1,3 +1,5 @@
+<img width="2240" height="748" alt="slammers001-github-banner" src="https://github.com/user-attachments/assets/13c0dce2-d658-45be-8299-6fcad3dd17d9" />
+
 # GitHub Badge Studio
 
 Transform your GitHub contributions into collectible, glowing badges. Build your developer identity and showcase your coding achievements in a beautiful, interactive way.
