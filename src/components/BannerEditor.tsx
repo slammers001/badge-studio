@@ -199,6 +199,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
     setSelectedBadge(null);
     setSelectedAvatar(false);
   };
+
+  const handleAvatarResizeStart = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!canvasRef.current) return;
