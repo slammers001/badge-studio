@@ -241,7 +241,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onClick={(e) => { if (e.target === canvasRef.current || (e.target as HTMLElement).classList.contains('bg-grid')) setSelectedBadge(null); }}
+        onClick={(e) => { if (e.target === canvasRef.current || (e.target as HTMLElement).classList.contains('bg-grid')) { setSelectedBadge(null); setSelectedAvatar(false); } }}
         className="relative w-full rounded-2xl border-2 border-border overflow-hidden select-none"
         style={{
           aspectRatio: '3 / 1',
