@@ -206,16 +206,16 @@ const Profile = () => {
           {/* Banner toggle */}
           <div className="flex gap-3 mb-8">
             <button
-              onClick={() => setShowBanner(false)}
-              className={`px-5 py-2.5 rounded-lg text-sm font-mono transition-all border ${!showBanner ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}
-            >
-              Badge Collection
-            </button>
-            <button
               onClick={() => setShowBanner(true)}
               className={`px-5 py-2.5 rounded-lg text-sm font-mono transition-all border ${showBanner ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}
             >
               ✨ Banner Editor
+            </button>
+            <button
+              onClick={() => setShowBanner(false)}
+              className={`px-5 py-2.5 rounded-lg text-sm font-mono transition-all border ${!showBanner ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}
+            >
+              Badge Collection
             </button>
           </div>
 
@@ -230,33 +230,11 @@ const Profile = () => {
           <>
 
           {/* Stats */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-display font-bold text-foreground">Badge Collection</h2>
-              <p className="text-sm font-mono text-muted-foreground mt-1">
-                <span className="text-primary">{earnedCount}</span> / {badges.length} badges earned
-              </p>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border">
-              <span className="text-xs font-mono text-muted-foreground">Rarity:</span>
-              <span className="text-xs text-muted-foreground">Common</span>
-              <span className="text-xs text-neon-green">Uncommon</span>
-              <span className="text-xs text-primary">Rare</span>
-              <span className="text-xs text-neon-purple">Epic</span>
-              <span className="text-xs text-accent">Legendary</span>
-            </div>
-          </div>
-
-          {/* Category tabs */}
-          <div className="flex gap-2 mb-8 flex-wrap">
-            <button onClick={() => setActiveCategory('all')} className={`px-4 py-2 rounded-lg text-sm font-mono transition-all border ${activeCategory === 'all' ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}>
-              All Badges
-            </button>
-            {categories.map(([key, config]) => (
-              <button key={key} onClick={() => setActiveCategory(key)} className={`px-4 py-2 rounded-lg text-sm font-mono transition-all border ${activeCategory === key ? 'bg-primary/10 border-primary/40 text-primary glow-cyan' : 'bg-card border-border text-muted-foreground hover:border-primary/20'}`}>
-                {config.icon} {config.label}
-              </button>
-            ))}
+          <div className="mb-8">
+            <h2 className="text-2xl font-display font-bold text-foreground">Badge Collection</h2>
+            <p className="text-sm font-mono text-muted-foreground mt-1">
+              <span className="text-primary">{earnedCount}</span> / {badges.length} badges earned
+            </p>
           </div>
 
           {/* Badge grid */}
