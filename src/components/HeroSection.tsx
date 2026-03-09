@@ -5,13 +5,17 @@ import { useNavigate } from 'react-router-dom';
 
 export const HeroSection = () => {
   const [username, setUsername] = useState('');
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = username.trim();
     if (trimmed) {
+      setError(false);
       navigate(`/badges/${encodeURIComponent(trimmed)}`);
+    } else {
+      setError(true);
     }
   };
 
@@ -61,10 +65,10 @@ export const HeroSection = () => {
             <input
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => { setUsername(e.target.value); setError(false); }}
               placeholder="Enter GitHub username"
               maxLength={39}
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl font-mono text-sm bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+              className={`w-full pl-12 pr-4 py-3.5 rounded-xl font-mono text-sm bg-card border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all ${error ? 'border-destructive ring-1 ring-destructive/30' : 'border-border focus:border-primary/50 focus:ring-1 focus:ring-primary/30'}`}
             />
           </div>
           <motion.button
@@ -78,6 +82,11 @@ export const HeroSection = () => {
           </motion.button>
         </form>
       </motion.div>
+
+      {/* Footer credit */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono text-muted-foreground/50">
+        made by <a href="https://github.com/slammers001" target="_blank" rel="noopener noreferrer" className="text-primary/60 hover:text-primary transition-colors">@slammers001</a>
+      </div>
     </section>
   );
 };
