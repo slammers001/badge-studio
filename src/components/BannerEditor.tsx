@@ -86,6 +86,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
   const [avatarRotating, setAvatarRotating] = useState<{ startAngle: number; startRotation: number } | null>(null);
 
   const [dragging, setDragging] = useState<{ type: 'badge' | 'username' | 'avatar'; index?: number } | null>(null);
+  const [useDisplayName, setUseDisplayName] = useState(false);
 
   const handlePointerDown = useCallback((type: 'badge' | 'username' | 'avatar', index?: number) => {
     setDragging({ type, index });
