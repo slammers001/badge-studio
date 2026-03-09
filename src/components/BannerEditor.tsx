@@ -424,7 +424,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
             }}
             onPointerDown={(e) => { e.preventDefault(); handlePointerDown('username'); }}
           >
-            @{username}
+            {useDisplayName ? displayName : `@${username}`}
           </div>
         )}
 
