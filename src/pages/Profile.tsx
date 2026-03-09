@@ -45,11 +45,11 @@ function generateBadges(user: GitHubUser, repos: GitHubRepo[], events: GitHubEve
 
   // Commits
   badges.push({
-    id: 'first-commit', name: 'First Blood', description: 'Made your first commit',
+    id: 'first-commit', name: 'Commit Ninja', description: 'Made your first commit',
     icon: '/badges/commit.png', category: 'commits', rarity: 'common', earned: pushEvents.length > 0,
   });
   badges.push({
-    id: 'commit-ninja', name: 'Commit Ninja', description: '10+ push events recently',
+    id: 'commit-ninja', name: 'Mean Merge Machine', description: '10+ push events recently',
     icon: '/badges/merge.png', category: 'commits', rarity: 'uncommon', earned: pushEvents.length >= 10,
   });
   badges.push({
