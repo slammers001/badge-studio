@@ -77,25 +77,6 @@ export const HeroSection = () => {
             <ArrowRight className="w-4 h-4" />
           </motion.button>
         </form>
-
-        {/* Floating badge previews */}
-        <div className="mt-16 flex items-center justify-center gap-6">
-          {['/badges/commit.png', '/badges/streak.png', '/badges/opensource.png', '/badges/merge.png', '/badges/hackathonchamp.png'].map((icon, i) => (
-            <motion.div
-              key={i}
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 2.5, delay: i * 0.3, ease: 'easeInOut' }}
-              className={`p-3 rounded-xl border ${
-                i === 4 ? 'border-accent/40 glow-gold' :
-                i === 2 ? 'border-primary/40 glow-cyan' :
-                i === 1 ? 'border-neon-magenta/40 glow-magenta' :
-                'border-border'
-              } bg-card`}
-            >
-              <img src={icon} alt="" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
-            </motion.div>
-          ))}
-        </div>
       </motion.div>
     </section>
   );
