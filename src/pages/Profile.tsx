@@ -150,7 +150,6 @@ const Profile = () => {
   const navigate = useNavigate();
   const [selectedBadge, setSelectedBadge] = useState<GitBadge | null>(null);
   const [showBanner, setShowBanner] = useState(true);
-  const [showBanner, setShowBanner] = useState(true);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['github', username],
