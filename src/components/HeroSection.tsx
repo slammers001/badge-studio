@@ -82,6 +82,11 @@ export const HeroSection = () => {
           </motion.button>
         </form>
       </motion.div>
+
+      {/* Footer credit */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono text-muted-foreground/50">
+        made by <a href="https://github.com/slammers001" target="_blank" rel="noopener noreferrer" className="text-primary/60 hover:text-primary transition-colors">@slammers001</a>
+      </div>
     </section>
   );
 };
