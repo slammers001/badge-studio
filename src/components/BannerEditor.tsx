@@ -486,9 +486,8 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
           );
         })}
 
-        {/* Drag hint */}
-        {/* Watermark */}
-        <div className="absolute bottom-2 right-3 text-[10px] font-mono text-white/30 pointer-events-none">
+        {/* Watermark - always on top */}
+        <div className="absolute bottom-2 right-3 text-[10px] font-mono text-white/50 pointer-events-none z-50" style={{ textShadow: '0 0 2px rgba(0,0,0,0.8)' }}>
           github.com/slammers001/badge-studio
         </div>
       </div>
