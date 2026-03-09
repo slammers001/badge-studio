@@ -241,7 +241,7 @@ const Profile = () => {
           <div className="relative bg-canvas bg-grid rounded-2xl border border-border p-8 min-h-[400px]">
             <motion.div layout className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 justify-items-center">
               <AnimatePresence mode="popLayout">
-                {filteredBadges.map((badge, i) => (
+                {badges.map((badge, i) => (
                   <motion.div key={badge.id} layout initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} transition={{ delay: i * 0.03, type: 'spring', stiffness: 300, damping: 25 }}>
                     <BadgeCard badge={badge} size="md" onClick={() => setSelectedBadge(badge)} />
                   </motion.div>
