@@ -68,7 +68,7 @@ export const HeroSection = () => {
               onChange={(e) => { setUsername(e.target.value); setError(false); }}
               placeholder="Enter GitHub username"
               maxLength={39}
-              className={`w-full pl-12 pr-4 py-3.5 rounded-xl font-mono text-sm bg-card border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all ${error ? 'border-destructive ring-1 ring-destructive/30' : 'border-border focus:border-primary/50 focus:ring-1 focus:ring-primary/30'}`}
+              className={`w-full pl-12 pr-4 py-3.5 rounded-xl font-mono text-sm bg-card border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all ${error ? 'border-primary ring-1 ring-primary/30' : 'border-border focus:border-primary/50 focus:ring-1 focus:ring-primary/30'}`}
             />
           </div>
           <motion.button
