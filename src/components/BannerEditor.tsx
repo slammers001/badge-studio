@@ -206,7 +206,7 @@ export const BannerEditor = ({ username, displayName, avatarUrl, badges }: Banne
         badge,
         x: minX + cellWidth * (col + 0.5) + jitterX,
         y: minY + cellHeight * (row + 0.5) + jitterY,
-        scale: 0.7 + Math.random() * 0.8,
+        scale: 3,
         rotation: Math.random() * 60 - 30,
       };
     }));
